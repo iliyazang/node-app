@@ -1,0 +1,35 @@
+name: deploy-nodejs-app
+on: 
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2.1.0
+
+    - name: install node-js
+      uses: action/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: install npm
+      run: npm install
+
+    - name: build
+      run: npm run build 
+        
+    - name: deploy to ec2 
+      run: |
+        ssh -o StrictHostKeyChecking=no \
+          -i ${{ secrets.EC2_SECRETS }} \ 
+          ec2-user@54.161.130.90 \
+          'cd /home/ec2-user/node-app && \
+          git pull -u origin main && \
+          npm install && \
+          node app.js'
+      env:
+      EC2_SECRETS: ${{ secrets.EC2_SECRETS }}
+
