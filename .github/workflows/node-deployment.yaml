@@ -30,6 +30,4 @@ jobs:
           git pull -u origin main && \
           npm install && \
           node app.js'
-      env:
-      EC2_SECRETS: ${{ secrets.EC2_SECRETS }}
 
